@@ -1,0 +1,139 @@
+#+TITLE: GSoC 2026: Port parts of GNU libcdio to Rust
+* Name: Shiva Kiran Koninty
+* Email: shiva_kr@riseup.net
+* Project Name: Port a few of the CLI programs of GNU libcdio to Rust
+* Project size: 350 hours
+* Summary
+Along with being a library for working with various optical media, GNU libcdio
+also includes CLI programs, such as cd-read, cd-info among others.
+
+This is part of the wider goal of introducing Rust to libcdio, on
+a component by component basis.
+These CLI programs are an easy first target in this effort.
+
+* Benefits
+** libcdio can now be a pure library
+Distributions (notably debian) would often package the CLI commands
+separately from the libcdio library.
+
+With these CLI programs moving to their own Rust crate, this will
+allow for libcdio to shed off the CLI code, and stay a pure C library.
+
+** Safer code
+Rust has proven to be a major evolution in programming languages, with
+its strict adherence to the concept of RAII, and memory ownership.
+
+While C is a good language, it requires for the programmer to be
+quite careful in handling memory, and bugs resulting from that
+tend to be quite severe.
+
+Therefore, introducing Rust to libcdio should make it a safer
+program with fewer bugs.
+
+** Ease of maintenance
+Rust's borrow checker does an excellent static analysis of the code,
+making life easier for maintainers while accepting contributions
+by allowing code reviews to focus on the logic of the feature/fix
+rather than on the misuses of the C language.
+
+** Wider participation
+Rust being a modern, safe and popular language should attract
+wider participation in the development of libcdio, especially
+from newer developers.
+
+** Evolution
+As the codebase adopts Rust more and more, Rust’s idioms
+should result in several classes of bugs, eliminated at compile time.
+
+Examples:
+- The Newtype pattern encodes invariants at the type level,
+  resulting in types and APIs that are impossible to misuse.
+- The Typestate pattern encodes the states of an object at compile
+  time, making invalid states unrepresentable.
+
+* Deliverables
+Port the following CLI programs of libcdio to Rust:
+- cd-drive
+- cd-read
+- iso-read
+- iso-info
+- mmc-tool
+- cd-info (optional)
+
+I shall port cd-info too, if time permits.
+cd-info has dependencies on libvcdinfo and libcddb,
+which do not have Rust crates for bindings.
+
+* Plan
+The first task is to have Rust bindings to libcdio.
+The crate libcdio-sys, provides exactly that:
+[[https://crates.io/crates/libcdio-sys]]
+
+The clap crate, which I plan to be using, is well
+renowned for implementing CLI programs in Rust:
+[[https://crates.io/crates/clap]]
+
+Then I shall make a new Rust crate, say "libcdio-cli",
+pull in libcdio-sys and clap as dependencies and
+start implementing each command, one by one.
+
+I roughly estimate taking about 3 weeks per command.
+Some commands take less, some take more, this is a rough
+average.
+
+Since this project implements each command sequentially,
+the completed commands shall still be usable results,
+in the case of not being able to complete the project.
+
+By the mid-term evaluation (assuming it's around the 8th week),
+I must ideally have completed porting two commands.
+
+I plan to allocate about 30 hours a week on this project.
+I would like my project length to be of 14-16 weeks.
+
+* Communication
+Based on my mentor's preference, I plan to either use email,
+or a real time messaging program such as Matrix for communication.
+I plan to update my mentor atleast once a week.
+I shall develop the code in a fork of the repository,
+shared with my mentor for regular reviews.
+
+* Qualification
+** Why did this project appeal to you?
+I admire Rust as a language. Working on moving C code to
+Rust would be a very valuable learning experience for me.
+
+Moreover, I deeply value the ideals of software freedom,
+and look at this as a small contribution to GNU, which
+played the largest role in the free software movement.
+
+** How will you benefit from it? Why are you particularly suited to work on this?
+I believe this contribution shall help me both in improving my Rust skills,
+as well as add to my experience contributing to free software.
+
+I have been writing Rust full-time at a blockchain based firm.
+I believe this experience shall greatly help in this project.
+
+** What will you do once the project is "finished"?
+I shall continue to maintain the code that I have contributed, and fix
+any bugs that come along the way.
+
+I shall also try to help in future proposals that extend Rust support
+for libcdio.
+
+** Have you worked on any Free Software before?
+Apart from a few bug fixes in some free programs that I use,
+my major contribution was to Project Libvirt, in adding a feature that allowed for
+custom metadata in Libvirt’s configuration and APIs.
+- Commits: [[https://gitlab.com/libvirt/libvirt/-/commits/master?search=K+Shiva]]
+
+** Of the skills that you will need to complete the project, which do you already have?
+- Experience with Rust.
+- Good Knowledge of C.
+- Knowledge of the low level concepts required for this task,
+  such as FFI, compilation, linking.
+
+** What will you need to learn?
+If we get time for implementing cd-info, I shall be learning
+more about Rust's build scripts, i.e build.rs
+- Doc: [[https://doc.rust-lang.org/cargo/reference/build-scripts.html]]
